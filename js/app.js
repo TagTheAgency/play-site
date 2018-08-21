@@ -1,28 +1,48 @@
 $(function() {
-    // Get the form.
-    var form = $('#contactform');
+  // Get the form.
+  var form = $('#contactform');
 
-    // Get the messages div.
-	$(form).submit(function(event) {
+  // Get the messages div.
+  $(form).submit(function(event) {
     // Stop the browser from submitting the form.
     event.preventDefault();
-	var formData = $(form).serialize();
+    var formData = $(form).serialize();
 
-	$.ajax({
-	    type: 'POST',
-	    url: $(form).attr('action'),
-	    data: formData
-	});
+	  $.ajax({
+	     type: 'POST',
+       url: $(form).attr('action'),
+       data: formData
+    });
+  });
 
-	});
+  $('body').click(function(evt) {
+    if(evt.target.id == "resourceDownload")
+      return;
+    if($(evt.target).closest('#resourceDownload').length)
+      return;
+    if($(evt.target).closest('#resourceForm').length)
+      return;
+    console.log('evt.target.id',evt.target.id);
+    $('#resourceForm').css('display','none');
+    $('#overlay').css('display','none');
+  });
+
+  $('#resourceDownload').click(function(){
+    $('#resourceForm').css('display','block');
+    $('#overlay').css('display','block');
+  });
+  $('.close-modal').click(function(){
+    $('#resourceForm').css('display','none');
+    $('#overlay').css('display','none');
+  });
+
 });
 
 var tag = document.createElement('script');
-		tag.src = 'https://www.youtube.com/player_api';
+tag.src = 'https://www.youtube.com/player_api';
 var firstScriptTag = document.getElementsByTagName('script')[0];
-		firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-var tv,
-		playerDefaults = {autoplay: 0, autohide: 1, modestbranding: 0, rel: 0, showinfo: 0, controls: 0, disablekb: 1, enablejsapi: 0, iv_load_policy: 3};
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+var tv, playerDefaults = {autoplay: 0, autohide: 1, modestbranding: 0, rel: 0, showinfo: 0, controls: 0, disablekb: 1, enablejsapi: 0, iv_load_policy: 3};
 var vid = [
 			{'videoId': 'X_bIawpAjmY', 'startSeconds': 0, 'endSeconds': 77, 'suggestedQuality': 'hd720'}
 		],
