@@ -8,7 +8,7 @@
         $email = filter_var(trim($_POST["email"]), FILTER_SANITIZE_EMAIL);
         $message = trim($_POST["message"]);
         $region = trim($_POST["region"]);
-		$recipient = "charlie@tagtheagency.com";
+		$recipient = "tom.reidy@tagtheagency.com";
         $phone = trim($_POST["phone"]);
 		$product = trim($_POST["product"]);
 

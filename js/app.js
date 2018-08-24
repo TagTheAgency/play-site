@@ -36,6 +36,32 @@ $(function() {
     $('#overlay').css('display','none');
   });
 
+
+
+  $("#clipForm").submit(function(e) {
+    e.preventDefault();
+    var form = $(this);
+    var url = form.attr('action');
+    var formData = $(form).serialize();
+
+    if (!$('#g-recaptcha-response').val()) {
+      alert("Please prove you're not a robot!");
+      return false;
+    }
+
+    $.ajax({
+      type: 'POST',
+      url: form.attr('action'),
+      data: formData
+    }).done(function() {
+      alert('Thanks, we have sent you an email');
+      $('#resourceForm').css('display','none');
+      $('#overlay').css('display','none');
+    }).fail(function() {
+      alert('Sorry, there was an error sending you an email.');
+    });
+  });
+
 });
 
 var tag = document.createElement('script');

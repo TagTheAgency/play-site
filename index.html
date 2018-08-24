@@ -71,9 +71,9 @@
 						<div id="resourceForm" class="modal" style="z-index:10000">
 							<a href="#close-modal" rel="modal:close" class="close-modal">Close</a>
 							<h3 style="color:black; padding-bottom: 20px">Enter your email address, and we'll send you a link to the clip guide</h3>
-						<form action="send_resource" method="POST" style="font-size:1.5em;">
+						<form action="send_resource.php" method="POST" style="font-size:1.5em;" id="clipForm">
 							<div class="form-section">
-								<input type="text" name="email" placeholder="Enter your email" required>
+								<input type="email" name="email" placeholder="Enter your email" required>
 							</div>
 							<div class="form-section">
 								<div class="g-recaptcha" data-sitekey="6LdiPmsUAAAAAL8_m_P8NSf6uWHKjVg5G6CKCJwv"></div>

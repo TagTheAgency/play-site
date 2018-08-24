@@ -2,51 +2,61 @@
 
     // Only process POST reqeusts.
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        // Get the form fields and remove whitespace.
-        $name = strip_tags(trim($_POST["name"]));
-				$name = str_replace(array("\r","\n"),array(" "," "),$name);
-        $email = filter_var(trim($_POST["email"]), FILTER_SANITIZE_EMAIL);
-        $message = trim($_POST["message"]);
-        $region = trim($_POST["region"]);
-		$recipient = "charlie@tagtheagency.com";
-        $phone = trim($_POST["phone"]);
-		$product = trim($_POST["product"]);
 
-        // Check that data was sent to the mailer.
-        if ( empty($name) OR empty($message) OR !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            // Set a 400 (bad request) response code and exit.
-            http_response_code(400);
-            echo "Oops! There was a problem with your submission. Please complete the form and try again.";
-            exit;
+      	$sender_email = stripslashes($_POST["email"]);
+
+        if (empty($sender_email)) {
+          echo '{"error": "Please specify an email address"}';
+          http_response_code(400);
+          exit;
         }
+      	$response = $_POST["g-recaptcha-response"];
 
-        // Set the email subject.
-        $subject = "$product - New enquiry from $name";
+      	$url = 'https://www.google.com/recaptcha/api/siteverify';
+      	$data = array(
+      		'secret' => '6LdiPmsUAAAAAMxjK3Ln3nrfilUYapRzk_uWzKFJ',
+      		'response' => $_POST["g-recaptcha-response"]
+      	);
+        $options = array(
+        	'http' => array (
+        		'method' => 'POST',
+        		'content' => http_build_query($data)
+        	)
+        );
+        $context  = stream_context_create($options);
+        $verify = file_get_contents($url, false, $context);
+        $captcha_success=json_decode($verify);
+        if ($captcha_success->success==false) {
+          echo '{"error": "Failed reCaptcha"}';
+          http_response_code(403);
+          exit;
+        } else if ($captcha_success->success==true) {
 
-        // Build the email content.
-    $email_content = "Name: $name\n";
-    $email_content .= "Email: $email\n";
-    $email_content .= "Phone: $phone\n\n";
-    $email_content .= "Message:\n$message\n";
-
-        // Build the email headers.
-        $email_headers = "From: $name <$email>";
-
-        // Send the email.
-        if (mail($recipient, $subject, $email_content, $email_headers)) {
-            // Set a 200 (okay) response code.
-            http_response_code(200);
-            echo "Thank You! Your message has been sent.";
-        } else {
-            // Set a 500 (internal server error) response code.
+          //send email to client
+          $subject = "TAG The Agency Clip Guide";
+          $body = "Thanks for your interest.  Download the TAG The Agency Clip Guide from https://play.tagtheagency.com/resources/video_script_how_to_guide.pdf\n\n";
+          $body .= "We hope it helps to tell your story.  The team at TAG The Agency are always happy to help tell your story in a unique and effective way.  Get in touch to talk to us.";
+          $email_headers = "From: TAG The Agency <play@tagtheagency.com>";
+          if (!mail($sender_email, $subject, $body, $email_headers)) {
+            echo '{"error": "Failed to send email"}';
             http_response_code(500);
-            echo "Oops! Something went wrong and we couldn't send your message.";
-        }
+            exit;
+          }
 
-    } else {
-        // Not a POST request, set a 403 (forbidden) response code.
-        http_response_code(403);
-        echo "There was a problem with your submission, please try again.";
-    }
+
+          //send email to us
+
+          $subject = "TAG The Agency Clip Guide";
+          $body = "New request for clip guide";
+          $body .= "From: $sender_email";
+          $email_headers = "From: TAG The Agency <play@tagtheagency.com>";
+          mail("play@tagtheagency.com", $subject, $body, $email_headers);
+
+          echo '{"status": "success"}';
+          exit;
+        }
+      }
+      echo '{"error": "Invalid submission"}';
+      http_response_code(400);
 
 ?>
