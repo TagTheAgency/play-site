@@ -49,8 +49,8 @@
           $subject = "TAG The Agency Clip Guide";
           $body = "New request for clip guide\n\n";
           $body .= "From: $sender_email";
-          $email_headers = "From: TAG The Agency <colin@tagtheagency.com>";
-          mail("colin@tagtheagency.com", $subject, $body, $email_headers);
+          $email_headers = "From: TAG The Agency <play@tagtheagency.com>";
+          mail("play@tagtheagency.com", $subject, $body, $email_headers);
 
           echo '{"status": "success"}';
           exit;
